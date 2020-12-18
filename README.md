@@ -2,7 +2,7 @@
 
 > Evaluation of modified autocidal gravid ovitraps for the control of container-breeding mosquitoes in Saint Augustine, FL
 
-[Rendered R makrdown document of statistical analysis is here](docs/glm-tests.nb.html)
+[Rendered R makrdown document of statistical analysis is here](https://usda-ars-gbru.github.io/dixon_etal_2021/glm-tests.nb.htmll)
 
 ## Authors
 
