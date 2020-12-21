@@ -4,6 +4,8 @@
 
 [Rendered R makrdown document of statistical analysis is here](https://usda-ars-gbru.github.io/dixon_etal_2021/glm-tests.html)
 
+[![DOI](https://zenodo.org/badge/322486553.svg)](https://zenodo.org/badge/latestdoi/322486553)
+
 ## Authors
 
 Author | Affiliation
