@@ -11,12 +11,13 @@ Analysis of mosquito trap data for the manuscript "Evaluation of modified autoci
 
 _*Adam Rivers*_  
 _*USDA-ARS Genomics and Bioinformatics Unit*_
+_21 December 2020_
 
 
 
 # Overview 
 
-In this experiment three treatment and control areas were defined in St. Augustine, FL. Mosquito monitoring traps were placed in treatment and control areas at equal densities. In the treatment areas AGO traps were placed to test their effectiveness atreducing mosquito populations.  After a 4 week period with no treatment, AGO kill traps were added and each area was monitored for 20 weeks.
+In this experiment three treatment and control areas were defined in St. Augustine, FL. Mosquito monitoring traps were placed in treatment and control areas at equal densities. In the treatment areas AGO traps were placed to test their effectiveness at reducing mosquito populations.  After a 4 week period with no treatment, AGO kill traps were added and each area was monitored for 20 weeks.
 
 Factors | comments
 ---|---
@@ -54,7 +55,7 @@ data_filtered <- filter(data, organism == "aedes_aegypti_female_count" & trap_ty
 
 ### Visualize the count data
 
-Data are highly skewed and there appear to be excess zeros.  We will use the negative binomial with and withou zero inflation.
+Data are highly skewed and there appear to be excess zeros.  We will use the negative binomial with and without zero inflation.
 ```{r}
 mean(data_filtered$count)
 sd(data_filtered$count)
@@ -123,9 +124,9 @@ model2 <- glmmTMB(count ~ treatment_type*site_pair + (1|week), data = data_filte
 
 ```{r}
 model2_simres <- simulateResiduals(model2)
-plotResiduals(modeld_simres, quantreg = T)
+plotResiduals(model2_simres, quantreg = T)
 ```
-There is a positive association with traps and mosquitoes in downtown and a negative relationship in the north and south. This model suggests that there is not a strong consistient relationship between traps and mosquitoes.
+There is a positive association with traps and mosquitoes in downtown and a negative relationship in the north and south. This model suggests that there is not a strong consistent relationship between traps and mosquitoes.
 
 ## SAGO trap data
 
@@ -158,9 +159,9 @@ ggsave("Aedes_aegypti_sago_weekly.pdf")
 ```
 
 
-## Zero inflated regression Models
+## Zero inflated regression models
 
-To use the Zero inflated model we will use the follwoing R package:
+To use the Zero inflated model we will use the following R package:
 
 Brooks ME, Kristensen K, van Benthem KJ, Magnusson A, Berg CW, Nielsen A, Skaug HJ, Maechler M, Bolker BM (2017). “glmmTMB Balances Speed and Flexibility Among Packages for Zero-inflated Generalized Linear Mixed Modeling.” The R Journal, 9(2), 378–400. https://journal.r-project.org/archive/2017/RJ-2017-066/index.html.
 
@@ -184,6 +185,141 @@ summary(model3e)
 
 ```{r}
 model3e_simres <- simulateResiduals(model3e)
-plotResiduals(modeld_simres, quantreg = T)
+plotResiduals(model3e_simres, quantreg = T)
 ```
 There is not a significant effect of treatment on counts of female _Aedes aegypti_ in SAGO traps
+
+
+
+# _Aedes albopictus_
+
+## Analysis of BG trap data
+
+We will first focus on BG traps and female _Aedes albopictus_ mosquitoes in BG traps
+```{r}
+data_filtered3 <- filter(data, organism =="aedes_albopictus_female_count" & trap_type =="bg")
+```
+
+
+### Visualize the count data
+
+Data are highly skewed and there appear to be excess zeros.  We will use the negative binomial with and without zero inflation.
+```{r}
+mean(data_filtered$count)
+sd(data_filtered$count)
+ggplot(data=data_filtered3, aes(count)) + geom_histogram(bins=45)+ xlab("Mosquito count") + ylab("Number of traps")
+ggsave("bg_albopictus_hist.pdf")
+
+```
+```{r}
+
+ggplot(aes(x=week, y=count, group=treatment_type, color=treatment_type), data=data_filtered3,) +
+  geom_jitter(alpha=0.5) +
+  theme(axis.text.x=element_text(angle =- 90, vjust = 0.5), legend.title=element_blank()) +
+  ylab("Mosquito count") +
+  xlab("Week")
+ggsave("albopictus_bg_weekly.pdf")
+```
+We will first focus on BG traps and female _Aedes aegypti_ mosquitoes in BG traps
+
+
+## Zero inflated regression Models
+
+To use the Zero inflated model we will use the following R package:
+
+Brooks ME, Kristensen K, van Benthem KJ, Magnusson A, Berg CW, Nielsen A, Skaug HJ, Maechler M, Bolker BM (2017). “glmmTMB Balances Speed and Flexibility Among Packages for Zero-inflated Generalized Linear Mixed Modeling.” The R Journal, 9(2), 378–400. https://journal.r-project.org/archive/2017/RJ-2017-066/index.html.
+
+### Model 4
+
+Glmm's negative binomial link function.
+```{r}
+library(glmmTMB)
+model4a <- glmmTMB(count ~ treatment_type, data = data_filtered3, family = nbinom2)
+model4b <- glmmTMB(count ~ treatment_type , data = data_filtered3, zi=~treatment_type, family = nbinom2)
+model4c <- glmmTMB(count ~ treatment_type + ar1(week-1|treatment_type), data = data_filtered3, family = nbinom2)
+model4d <- glmmTMB(count ~ treatment_type + ar1(week-1|treatment_type), data = data_filtered3, zi=~treatment_type, family = nbinom2)
+model4e <- glmmTMB(count ~ treatment_type + (1|week), data = data_filtered3, zi=~treatment_type, family = nbinom2)
+anova(model4a, model4b, model4c, model4d, model4e)
+```
+Model 4c has the lowest AIC/BIC scores.
+
+```{r}
+summary(model4c)
+```
+
+```{r}
+model4c_simres <- simulateResiduals(model4c)
+plotResiduals(model4c_simres, quantreg = T)
+```
+There is not a significant effect of treatment on counts of female _Aedes albopictus_ in SAGO traps
+
+
+# _All mosquitoes_
+
+## Analysis of BG trap data
+
+We will first focus on BG traps and all mosquitoes in BG traps
+```{r}
+data_filtered4 <- filter(data, organism !="non_target_count" & trap_type =="bg")
+
+```
+
+
+### Visualize the count data
+
+Data are highly skewed and there appear to be excess zeros.  We will use the negative binomial with and without zero inflation.
+```{r}
+mean(data_filtered$count)
+sd(data_filtered$count)
+ggplot(data=data_filtered4, aes(count)) + geom_histogram(bins=45)+ xlab("Mosquito count") + ylab("Number of traps")
+#ggsave("bg_hist.pdf")
+
+```
+
+
+```{r}
+
+ggplot(aes(x=week, y=count, group=treatment_type, color=treatment_type), data=data_filtered4,) +
+  geom_jitter(alpha=0.5) +
+  theme(axis.text.x=element_text(angle =- 90, vjust = 0.5), legend.title=element_blank()) +
+  ylab("Mosquito count") +
+  xlab("Week")
+ggsave("all_bg_weekly.pdf")
+```
+We will first focus on BG traps and female All mosquitoes in BG traps
+
+
+## Zero inflated regression Models
+
+To use the Zero inflated model we will use the following R package:
+
+Brooks ME, Kristensen K, van Benthem KJ, Magnusson A, Berg CW, Nielsen A, Skaug HJ, Maechler M, Bolker BM (2017). “glmmTMB Balances Speed and Flexibility Among Packages for Zero-inflated Generalized Linear Mixed Modeling.” The R Journal, 9(2), 378–400. https://journal.r-project.org/archive/2017/RJ-2017-066/index.html.
+
+### Model 5
+
+Glmm's negative binomial link function.
+```{r}
+library(glmmTMB)
+model5a <- glmmTMB(count ~ treatment_type, data = data_filtered4, family = nbinom2)
+model5b <- glmmTMB(count ~ treatment_type , data = data_filtered4, zi=~treatment_type, family = nbinom2)
+model5c <- glmmTMB(count ~ treatment_type + ar1(week-1|treatment_type), data = data_filtered4, family = nbinom2)
+model5d <- glmmTMB(count ~ treatment_type + ar1(week-1|treatment_type), data = data_filtered4, zi=~treatment_type, family = nbinom2)
+model5e <- glmmTMB(count ~ treatment_type + (1|week), data = data_filtered4, zi=~treatment_type, family = nbinom2)
+```
+```{r}
+anova(model5a, model5b, model5c, model5d, model5e)
+```
+
+Model 5e has the lowest AIC/BIC scores.
+
+```{r}
+summary(model5e)
+```
+
+```{r}
+model5e_simres <- simulateResiduals(model5e)
+plotResiduals(model5e_simres, quantreg = T)
+```
+There is not a significant effect of treatment on counts on the full Mosquito population in SAGO traps
+
+
