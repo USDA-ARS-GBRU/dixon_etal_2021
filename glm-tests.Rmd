@@ -60,7 +60,7 @@ Data are highly skewed and there appear to be excess zeros.  We will use the neg
 mean(data_filtered$count)
 sd(data_filtered$count)
 ggplot(data=data_filtered, aes(count)) + geom_histogram(bins=45)+ xlab("Mosquito count") + ylab("Number of traps")
-ggsave("bg_hist.pdf")
+ggsave("docs/bg_hist.pdf")
 
 ```
 
@@ -73,7 +73,7 @@ ggplot(aes(x=week, y=count, group=treatment_type, color=treatment_type), data=da
   theme(axis.text.x=element_text(angle =- 90, vjust = 0.5), legend.title=element_blank()) +
   ylab("Mosquito count") +
   xlab("Week")
-ggsave("Aedes_aegypti_bg_weekly.pdf")
+ggsave("docs/Aedes_aegypti_bg_weekly.pdf")
 ```
 
 ### Model 1
@@ -144,7 +144,7 @@ Data are highly skewed and there appear to be many excess zeros.  I will evaluat
 mean(data_filtered2$count)
 sd(data_filtered2$count)
 ggplot(data=data_filtered2, aes(count)) + geom_histogram(bins=6)+ xlab("Mosquito count") + ylab("Number of traps")
-ggsave("sago_hist.pdf")
+ggsave("docs/sago_hist.pdf")
 
 ```
 
@@ -155,7 +155,7 @@ There are many Zeros in the data. A zero inflated Negative Binomial or zero infl
 ```{r}
 ggplot( aes(x=week, y=count, group=treatment_type, color=treatment_type), data=data_filtered2,) + geom_jitter(alpha=0.5)+ theme(axis.text.x=element_text(angle =- 90, vjust = 0.5), legend.title=element_blank()) + ylab("Mosquito count") + xlab("Week")
 
-ggsave("Aedes_aegypti_sago_weekly.pdf")
+ggsave("docs/Aedes_aegypti_sago_weekly.pdf")
 ```
 
 
@@ -208,7 +208,7 @@ Data are highly skewed and there appear to be excess zeros.  We will use the neg
 mean(data_filtered$count)
 sd(data_filtered$count)
 ggplot(data=data_filtered3, aes(count)) + geom_histogram(bins=45)+ xlab("Mosquito count") + ylab("Number of traps")
-ggsave("bg_albopictus_hist.pdf")
+ggsave("docs/bg_albopictus_hist.pdf")
 
 ```
 ```{r}
@@ -218,7 +218,7 @@ ggplot(aes(x=week, y=count, group=treatment_type, color=treatment_type), data=da
   theme(axis.text.x=element_text(angle =- 90, vjust = 0.5), legend.title=element_blank()) +
   ylab("Mosquito count") +
   xlab("Week")
-ggsave("albopictus_bg_weekly.pdf")
+ggsave("docs/albopictus_bg_weekly.pdf")
 ```
 We will first focus on BG traps and female _Aedes aegypti_ mosquitoes in BG traps
 
@@ -251,7 +251,23 @@ summary(model4c)
 model4c_simres <- simulateResiduals(model4c)
 plotResiduals(model4c_simres, quantreg = T)
 ```
-There is not a significant effect of treatment on counts of female _Aedes albopictus_ in SAGO traps
+
+## Analysis of SAGO trap data for female _Aedes albopictus_ 
+
+Select  female _Aedes albopictus_ mosquitoes in SAGO traps
+```{r}
+data_filtered3b <- filter(data, organism =="aedes_albopictus_female_count" & trap_type =="sago")
+```
+
+
+```{r}
+ggplot(aes(x=week, y=count, group=treatment_type, color=treatment_type), data=data_filtered3b,) +
+  geom_jitter(alpha=0.5) +
+  theme(axis.text.x=element_text(angle =- 90, vjust = 0.5), legend.title=element_blank()) +
+  ylab("Mosquito count") +
+  xlab("Week")
+ggsave("docs/albopictus_sago_weekly.pdf")
+```
 
 
 # _All mosquitoes_
@@ -272,7 +288,7 @@ Data are highly skewed and there appear to be excess zeros.  We will use the neg
 mean(data_filtered$count)
 sd(data_filtered$count)
 ggplot(data=data_filtered4, aes(count)) + geom_histogram(bins=45)+ xlab("Mosquito count") + ylab("Number of traps")
-#ggsave("bg_hist.pdf")
+ggsave("docs/bg_hist.pdf")
 
 ```
 
@@ -284,7 +300,7 @@ ggplot(aes(x=week, y=count, group=treatment_type, color=treatment_type), data=da
   theme(axis.text.x=element_text(angle =- 90, vjust = 0.5), legend.title=element_blank()) +
   ylab("Mosquito count") +
   xlab("Week")
-ggsave("all_bg_weekly.pdf")
+ggsave("docs/all_bg_weekly.pdf")
 ```
 We will first focus on BG traps and female All mosquitoes in BG traps
 
@@ -320,6 +336,23 @@ summary(model5e)
 model5e_simres <- simulateResiduals(model5e)
 plotResiduals(model5e_simres, quantreg = T)
 ```
-There is not a significant effect of treatment on counts on the full Mosquito population in SAGO traps
+
+## Analysis of SAGO trap data for female all mosquitoes 
+
+Select  female _Aedes albopictus_ mosquitoes in SAGO traps
+```{r}
+data_filtered4b <- filter(data, organism =="aedes_albopictus_female_count" & trap_type =="sago")
+```
+
+
+```{r}
+ggplot(aes(x=week, y=count, group=treatment_type, color=treatment_type), data=data_filtered4b,) +
+  geom_jitter(alpha=0.5) +
+  theme(axis.text.x=element_text(angle =- 90, vjust = 0.5), legend.title=element_blank()) +
+  ylab("Mosquito count") +
+  xlab("Week")
+ggsave("docs/all_mosquitoes_sago_weekly.pdf")
+```
+
 
 
