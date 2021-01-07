@@ -259,6 +259,10 @@ Select  female _Aedes albopictus_ mosquitoes in SAGO traps
 data_filtered3b <- filter(data, organism =="aedes_albopictus_female_count" & trap_type =="sago")
 ```
 
+```{r}
+ggplot(data=data_filtered3b, aes(count)) + geom_histogram(bins=10)+ xlab("Mosquito count") + ylab("Number of traps")
+ggsave("docs/albopictus_sago_hist.pdf")
+```
 
 ```{r}
 ggplot(aes(x=week, y=count, group=treatment_type, color=treatment_type), data=data_filtered3b,) +
@@ -342,6 +346,14 @@ plotResiduals(model5e_simres, quantreg = T)
 Select  female _Aedes albopictus_ mosquitoes in SAGO traps
 ```{r}
 data_filtered4b <- filter(data, organism =="aedes_albopictus_female_count" & trap_type =="sago")
+```
+
+
+
+```{r}
+ggplot(data=data_filtered4b, aes(count)) + geom_histogram(bins=10)+ xlab("Mosquito count") + ylab("Number of traps")
+ggsave("docs/all_mosquitoes_sago_hist.pdf")
+```
 ```
 
 
